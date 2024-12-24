@@ -11,4 +11,5 @@ I am a student at KLE Technological University, pursuing computer science course
 **Course Instructor** Mallikarjun Akki  
 **Portfolio Topic/Domain** Google  
 [Course Learning Reflection](https://01fe23bcs120.github.io/Learning-Reflections.github.io/)  
-[Business Cases](https://01fe23bcs120.github.io/Bussiness-Cases.github.io/)
+[Business Cases](https://01fe23bcs120.github.io/Bussiness-Cases.github.io/)  
+"The biggest risk is not taking any risk."-Mark Zuckerberg
