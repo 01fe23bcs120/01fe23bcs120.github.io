@@ -13,4 +13,5 @@ I am a student at KLE Technological University, pursuing computer science course
 [Course Learning Reflection](https://01fe23bcs120.github.io/Learning-Reflections.github.io/)  
 [Business Cases](https://01fe23bcs120.github.io/Bussiness-Cases.github.io/)  
 [Course Project](https://01fe23bcs120.github.io/course-project.github.io/)  
+[Merged Code](https://github.com/01fe23bcs120/01fe23bcs120.github.io/blob/main/mergedcode.cpp)  
 "The biggest risk is not taking any risk."-Mark Zuckerberg
