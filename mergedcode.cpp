@@ -1,175 +1,165 @@
 #include <iostream>
 #include <vector>
-#include <queue>
-#include <string>
-#include <limits>
+#include <climits>
 using namespace std;
 
-const int INF = numeric_limits<int>::max();
+#define INF INT_MAX
+#define vert 4
 
-// Function 1: Shelter-to-Zone Connectivity Analysis (Floyd-Warshall)
-void floydWarshall(vector<vector<int>>& graph) {
-    int V = graph.size();
-    vector<vector<int>> dist = graph;
+void print(int dist[][vert]) {
+    for (int i = 0; i < vert; i++) {
+        for (int j = 0; j < vert; j++) {
+            if (dist[i][j] == INF)
+                cout << "INF ";
+            else
+                cout << dist[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
 
-    for (int k = 0; k < V; ++k) {
-        for (int i = 0; i < V; ++i) {
-            for (int j = 0; j < V; ++j) {
-                if (dist[i][k] != INF && dist[k][j] != INF && dist[i][j] > dist[i][k] + dist[k][j]) {
+void floyd(int dist[][vert]) {
+    for (int k = 0; k < vert; k++) {
+        for (int i = 0; i < vert; i++) {
+            for (int j = 0; j < vert; j++) {
+                if (dist[i][j] > dist[i][k] + dist[k][j] && dist[i][k] != INF && dist[k][j] != INF)
                     dist[i][j] = dist[i][k] + dist[k][j];
-                }
             }
         }
     }
-
-    cout << "Shortest path matrix:" << endl;
-    for (const auto& row : dist) {
-        for (int val : row) {
-            if (val == INF) cout << "INF ";
-            else cout << val << " ";
-        }
-        cout << endl;
-    }
+    print(dist);
 }
 
-// Function 2: Task Scheduling for Rescue Operations (Merge Sort)
-struct Task {
-    string name;
-    int deadline;
-};
+void fw_5() {
+    int graph[vert][vert] = {{0, INF, 3, INF}, {2, 0, INF, INF}, {INF, 7, 0, 1}, {6, INF, INF, 0}};
+    cout << "All pair shortest path between shelters and disaster zone: \n";
+    floyd(graph);
+}
 
-void merge(vector<Task>& tasks, int left, int mid, int right) {
-    int n1 = mid - left + 1;
-    int n2 = right - mid;
-
-    vector<Task> L(n1), R(n2);
-    for (int i = 0; i < n1; ++i) L[i] = tasks[left + i];
-    for (int i = 0; i < n2; ++i) R[i] = tasks[mid + 1 + i];
-
-    int i = 0, j = 0, k = left;
-    while (i < n1 && j < n2) {
-        if (L[i].deadline <= R[j].deadline) {
-            tasks[k++] = L[i++];
+void merge(vector<pair<int, int>> &b, vector<pair<int, int>> &c, vector<pair<int, int>> &a) {
+    int i = 0, j = 0, k = 0, p = b.size(), q = c.size();
+    while (i < p && j < q) {
+        if (b[i].second >= c[j].second) {
+            a[k] = b[i];
+            i++;
         } else {
-            tasks[k++] = R[j++];
+            a[k] = c[j];
+            j++;
         }
+        k++;
     }
 
-    while (i < n1) tasks[k++] = L[i++];
-    while (j < n2) tasks[k++] = R[j++];
+    while (i < p) {
+        a[k] = b[i];
+        i++;
+        k++;
+    }
+    while (j < q) {
+        a[k] = c[j];
+        j++;
+        k++;
+    }
 }
 
-void mergeSort(vector<Task>& tasks, int left, int right) {
-    if (left < right) {
-        int mid = left + (right - left) / 2;
-        mergeSort(tasks, left, mid);
-        mergeSort(tasks, mid + 1, right);
-        merge(tasks, left, mid, right);
+void mergesort(vector<pair<int, int>> &a) {
+    if (a.size() > 1) {
+        int half = a.size() / 2;
+        vector<pair<int, int>> b(a.begin(), a.begin() + half);
+        vector<pair<int, int>> c(a.begin() + half, a.end());
+        mergesort(b);
+        mergesort(c);
+        merge(b, c, a);
     }
 }
 
-// Function 3: Flood Path Prediction (BFS)
-void floodPrediction(const vector<vector<int>>& graph, vector<int> sources) {
-    int V = graph.size();
-    vector<int> floodedTime(V, -1);
-    queue<int> q;
-
-    for (int source : sources) {
-        floodedTime[source] = 0;
-        q.push(source);
+void mergesort_8() {
+    vector<pair<int, int>> tasks = {{1, 34}, {2, 0}, {3, 45}, {4, 6}, {5, 5}};
+    cout << "Task number and their priority level: \n\nTask\tPriority\n\n";
+    for (auto &pair : tasks) {
+        cout << pair.first << " \t " << pair.second << endl;
     }
+    cout << "\nOn sorting the tasks based on priority level: \n\nTask\tPriority\n\n";
+    mergesort(tasks);
+    for (auto &pair : tasks) {
+        cout << pair.first << " \t " << pair.second << endl;
+    }
+}
 
-    while (!q.empty()) {
-        int node = q.front();
-        q.pop();
+void bfs(int m[10][10], int v, int source) {
+    int queue[10], front = 0, rear = 0, visited[10];
+    for (int i = 0; i < v; i++)
+        visited[i] = 0;
+    visited[source] = 1;
+    queue[rear] = source;
 
-        for (int neighbor = 0; neighbor < V; ++neighbor) {
-            if (graph[node][neighbor] && floodedTime[neighbor] == -1) {
-                floodedTime[neighbor] = floodedTime[node] + 1;
-                q.push(neighbor);
+    while (front <= rear) {
+        int u = queue[front];
+        front++;
+        cout << u << " ";
+        for (int i = 0; i < v; i++) {
+            if (m[u][i] == 1 && visited[i] == 0) {
+                visited[i] = 1;
+                rear++;
+                queue[rear] = i;
             }
         }
     }
+}
 
-    cout << "Flood times for regions:" << endl;
-    for (int i = 0; i < V; ++i) {
-        cout << "Region " << i << ": ";
-        if (floodedTime[i] == -1) cout << "Not Flooded";
-        else cout << "Flooded at time " << floodedTime[i];
-        cout << endl;
+void bfs_9() {
+    int m[10][10] = {
+        {0, 1, 0, 0, 1},
+        {1, 0, 1, 0, 0},
+        {0, 1, 0, 1, 1},
+        {0, 0, 1, 0, 1},
+        {1, 0, 1, 1, 0}};
+    int v = 5;
+    int source = 0;
+    cout << "Connectivity of the road, thus allowing water flow in the following path (considering root source of flood is 0):\n ";
+    bfs(m, v, source);
+}
+
+void dfs(int m[10][10], int v, int source, vector<int> &visited, vector<int> &path) {
+    visited[source] = 1;
+    for (int i = 0; i < v; i++) {
+        if (m[source][i] == 1 && visited[i] == 0) {
+            cout << i << " ";
+            for (int j = 0; j < v; j++) {
+                if (m[j][i] == 1)
+                    path[i] += 1;
+            }
+            dfs(m, v, i, visited, path);
+        }
     }
 }
 
-// Main function with menu
+void dfs_10() {
+    int m[10][10] = {
+        {0, 1, 0, 0, 1},
+        {1, 0, 1, 0, 0},
+        {0, 1, 0, 1, 1},
+        {0, 0, 1, 0, 1},
+        {1, 0, 1, 1, 0}};
+    int v = 5;
+    int source = 0;
+    vector<int> visited(v, 0);
+    vector<int> path(v, 0);
+    cout << "Depth First Search starting from node 0:\n";
+    dfs(m, v, source, visited, path);
+}
+
 int main() {
-    int choice;
-    cout << "Select an operation:" << endl;
-    cout << "1. Shelter-to-Zone Connectivity Analysis (Floyd-Warshall)" << endl;
-    cout << "2. Task Scheduling for Rescue Operations (Merge Sort)" << endl;
-    cout << "3. Flood Path Prediction (BFS)" << endl;
-    cout << "Enter your choice: ";
-    cin >> choice;
+    cout << "--- Floyd-Warshall Algorithm ---\n";
+    fw_5();
 
-    switch (choice) {
-        case 1: {
-            int V;
-            cout << "Enter number of nodes: ";
-            cin >> V;
-            vector<vector<int>> graph(V, vector<int>(V));
-            cout << "Enter adjacency matrix (use " << INF << " for no connection):" << endl;
-            for (int i = 0; i < V; ++i) {
-                for (int j = 0; j < V; ++j) {
-                    cin >> graph[i][j];
-                }
-            }
-            floydWarshall(graph);
-            break;
-        }
+    cout << "\n--- Merge Sort Tasks ---\n";
+    mergesort_8();
 
-        case 2: {
-            int n;
-            cout << "Enter number of tasks: ";
-            cin >> n;
-            vector<Task> tasks(n);
-            cout << "Enter tasks (name and deadline):" << endl;
-            for (int i = 0; i < n; ++i) {
-                cin >> tasks[i].name >> tasks[i].deadline;
-            }
-            mergeSort(tasks, 0, n - 1);
-            cout << "Sorted tasks by deadline:" << endl;
-            for (const auto& task : tasks) {
-                cout << task.name << " - Deadline: " << task.deadline << endl;
-            }
-            break;
-        }
+    cout << "\n--- Breadth First Search ---\n";
+    bfs_9();
 
-        case 3: {
-            int V, E, sourceCount;
-            cout << "Enter number of regions: ";
-            cin >> V;
-            vector<vector<int>> graph(V, vector<int>(V, 0));
-            cout << "Enter number of connections: ";
-            cin >> E;
-            cout << "Enter connections (u v):" << endl;
-            for (int i = 0; i < E; ++i) {
-                int u, v;
-                cin >> u >> v;
-                graph[u][v] = graph[v][u] = 1;
-            }
-            cout << "Enter number of flood sources: ";
-            cin >> sourceCount;
-            vector<int> sources(sourceCount);
-            cout << "Enter flood source nodes:" << endl;
-            for (int i = 0; i < sourceCount; ++i) {
-                cin >> sources[i];
-            }
-            floodPrediction(graph, sources);
-            break;
-        }
-
-        default:
-            cout << "Invalid choice!" << endl;
-    }
+    cout << "\n--- Depth First Search ---\n";
+    dfs_10();
 
     return 0;
 }
