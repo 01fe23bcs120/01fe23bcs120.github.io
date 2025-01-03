@@ -119,35 +119,6 @@ void bfs_9() {
     bfs(m, v, source);
 }
 
-void dfs(int m[10][10], int v, int source, vector<int> &visited, vector<int> &path) {
-    visited[source] = 1;
-    for (int i = 0; i < v; i++) {
-        if (m[source][i] == 1 && visited[i] == 0) {
-            cout << i << " ";
-            for (int j = 0; j < v; j++) {
-                if (m[j][i] == 1)
-                    path[i] += 1;
-            }
-            dfs(m, v, i, visited, path);
-        }
-    }
-}
-
-void dfs_10() {
-    int m[10][10] = {
-        {0, 1, 0, 0, 1},
-        {1, 0, 1, 0, 0},
-        {0, 1, 0, 1, 1},
-        {0, 0, 1, 0, 1},
-        {1, 0, 1, 1, 0}};
-    int v = 5;
-    int source = 0;
-    vector<int> visited(v, 0);
-    vector<int> path(v, 0);
-    cout << "Depth First Search starting from node 0:\n";
-    dfs(m, v, source, visited, path);
-}
-
 int main() {
     cout << "--- Floyd-Warshall Algorithm ---\n";
     fw_5();
@@ -157,9 +128,6 @@ int main() {
 
     cout << "\n--- Breadth First Search ---\n";
     bfs_9();
-
-    cout << "\n--- Depth First Search ---\n";
-    dfs_10();
 
     return 0;
 }
